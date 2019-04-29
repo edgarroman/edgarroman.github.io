@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>blog on Edgar Roman&#39;s Blog</title>
-    <link>http://edgarroman.com/tags/blog/</link>
+    <link>/tags/blog/</link>
     <description>Recent content in blog on Edgar Roman&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright 2019</copyright>
     <lastBuildDate>Tue, 23 Apr 2019 13:18:10 -0400</lastBuildDate>
     
-	<atom:link href="http://edgarroman.com/tags/blog/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Blog Setup</title>
-      <link>http://edgarroman.com/blog/2019/blog-setup/</link>
+      <link>/blog/2019/blog-setup/</link>
       <pubDate>Tue, 23 Apr 2019 13:18:10 -0400</pubDate>
       
-      <guid>http://edgarroman.com/blog/2019/blog-setup/</guid>
+      <guid>/blog/2019/blog-setup/</guid>
       <description>This post describes the current setup for this blog</description>
     </item>
     

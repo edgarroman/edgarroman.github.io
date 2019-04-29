@@ -3,48 +3,48 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://edgarroman.com/blog/2019/blog-setup/</loc>
+    <loc>/blog/2019/blog-setup/</loc>
     <lastmod>2019-04-23T13:18:10-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://edgarroman.com/blog/</loc>
-    <lastmod>2019-04-23T13:18:10-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://edgarroman.com/</loc>
+    <loc>/blog/</loc>
     <lastmod>2019-04-23T13:18:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://edgarroman.com/tags/</loc>
+    <loc>/</loc>
     <lastmod>2019-04-23T13:18:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://edgarroman.com/tags/blog/</loc>
+    <loc>/tags/</loc>
     <lastmod>2019-04-23T13:18:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://edgarroman.com/tags/blogging/</loc>
+    <loc>/tags/blog/</loc>
     <lastmod>2019-04-23T13:18:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://edgarroman.com/tags/hugo/</loc>
+    <loc>/tags/blogging/</loc>
     <lastmod>2019-04-23T13:18:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://edgarroman.com/categories/</loc>
+    <loc>/tags/hugo/</loc>
+    <lastmod>2019-04-23T13:18:10-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
     <priority>0</priority>
   </url>
   
