@@ -1,10 +1,23 @@
 body {
     min-height: 75rem;
     padding-top: 4.5rem;
+    background-image: url('/img/backgrounds/scribble_light_@2X.png');
 }
 
-/*
-.badge > a {
-    color: white;
+.card {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: none;
 }
-*/
+
+.card:nth-child(even) {
+    background: rgba(187, 194, 226, 0.4);
+}
+.card:nth-child(odd) {
+    background: rgb(255, 255, 255, 0.4);
+}
+
+.badge {
+    margin-right: 3px;
+    box-shadow: 1px 1px lightsteelblue;
+}
