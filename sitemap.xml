@@ -3,32 +3,43 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/blog/2019/blog-setup/</loc>
-    <lastmod>2019-04-30T12:18:10-04:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/blog/</loc>
-    <lastmod>2019-04-30T12:18:10-04:00</lastmod>
+    <lastmod>2019-05-01T11:00:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-04-30T12:18:10-04:00</lastmod>
+    <lastmod>2019-05-01T11:00:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>/blog/2019/markdown-examples/</loc>
+    <lastmod>2019-05-01T11:00:10-04:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/tags/</loc>
-    <lastmod>2019-04-30T12:18:10-04:00</lastmod>
+    <lastmod>2019-05-01T11:00:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/blog/</loc>
-    <lastmod>2019-04-30T12:18:10-04:00</lastmod>
+    <lastmod>2019-05-01T11:00:10-04:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/markdown/</loc>
+    <lastmod>2019-05-01T11:00:10-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/blog/2019/blog-setup/</loc>
+    <lastmod>2019-04-30T12:18:10-04:00</lastmod>
   </url>
   
   <url>
