@@ -94,6 +94,8 @@ if (!doNotTrack) {
 
 <p>Used mostly as a reference for me when creating blog posts</p>
 
+<p class="divder"></p>
+
 <h2 id="headers">Headers</h2>
 
 
@@ -145,7 +147,7 @@ if (!doNotTrack) {
     </div>
 </div>
 
-<p></p><p></p>
+<p class="divder"></p>
 
 <h2 id="typography">Typography</h2>
 
@@ -185,6 +187,411 @@ Strong emphasis, aka bold, with <span class="gs">**asterisks**</span> or <span c
 Combined emphasis with <span class="gs">**asterisks and _underscores_**</span>.
 
 Strikethrough uses two tildes. <span class="gd">~~Scratch this.~~</span>
+</code></pre></div>
+    </div>
+</div>
+
+<p class="divder"></p>
+
+<h2 id="lists">Lists</h2>
+
+
+
+
+
+
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-lists" data-toggle="tab" href="#tablists"
+            role="tab" aria-controls="nav-home" aria-selected="true">Output</a>
+        <a class="nav-item nav-link" id="nav-lists" data-toggle="tab" href="#tablists-code"
+            role="tab" aria-controls="nav-home" aria-selected="false">Markdown Code</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="lists">
+    <div class="tab-pane fade show active" id="tablists" role="tabpanel" aria-labelledby="nav-lists">
+        <p><strong>Ordered list</strong></p>
+
+<ol>
+<li>item 1</li>
+<li>item 2
+
+<ol>
+<li>sub-item a</li>
+<li>sub-item b</li>
+</ol></li>
+
+<li><p>item 3 with paragraph</p>
+
+<p>Just have it indent to see nice
+indentations</p>
+
+<p>And just add blank line for continuation</p></li>
+
+<li><p>Last item</p></li>
+</ol>
+
+<p><strong>Unordered list</strong></p>
+
+<ul>
+<li>first</li>
+<li>second</li>
+<li>third</li>
+</ul>
+
+    </div>
+    <div class="tab-pane fade" id="tablists-code" role="tabpanel" aria-labelledby="nav-lists">
+        <div class="highlight"><pre class="chroma"><code class="language-markdown" data-lang="markdown">
+
+<span class="gs">**Ordered list**</span>
+
+<span class="k">1.</span> item 1
+<span class="k">1.</span> item 2
+    <span class="k">1.</span> sub-item a
+    <span class="k">1.</span> sub-item b
+<span class="k">1.</span> item 3 with paragraph
+
+    Just have it indent to see nice
+    indentations
+
+    And just add blank line for continuation
+
+<span class="k">1.</span> Last item
+
+<span class="gs">**Unordered list**</span>
+
+<span class="k">-</span>   first
+<span class="k">-</span>   second
+<span class="k">-</span>   third
+
+</code></pre></div>
+    </div>
+</div>
+
+<p class="divder"></p>
+
+<h2 id="links">Links</h2>
+
+
+
+
+
+
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-links" data-toggle="tab" href="#tablinks"
+            role="tab" aria-controls="nav-home" aria-selected="true">Output</a>
+        <a class="nav-item nav-link" id="nav-links" data-toggle="tab" href="#tablinks-code"
+            role="tab" aria-controls="nav-home" aria-selected="false">Markdown Code</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="links">
+    <div class="tab-pane fade show active" id="tablinks" role="tabpanel" aria-labelledby="nav-links">
+        <p><a href="https://www.google.com">I&rsquo;m an inline-style link</a></p>
+
+<p><a href="https://www.google.com" title="Google's Homepage">I&rsquo;m an inline-style link with title</a></p>
+
+<p><a href="https://www.mozilla.org">I&rsquo;m a reference-style link</a></p>
+
+<p><a href="../blob/master/LICENSE">I&rsquo;m a relative reference to a repository file</a></p>
+
+<p><a href="http://slashdot.org">You can use numbers for reference-style link definitions</a></p>
+
+<p>Or leave it empty and use the <a href="http://www.reddit.com">link text itself</a>.</p>
+
+<p>URLs and URLs in angle brackets will automatically get turned into links.
+<a href="http://www.example.com">http://www.example.com</a> or <a href="http://www.example.com">http://www.example.com</a></p>
+
+<p>Some text to show that the reference links can follow later.</p>
+
+    </div>
+    <div class="tab-pane fade" id="tablinks-code" role="tabpanel" aria-labelledby="nav-links">
+        <div class="highlight"><pre class="chroma"><code class="language-markdown" data-lang="markdown">
+[<span class="nt">I&#39;m an inline-style link</span>](<span class="na">https://www.google.com</span>)
+
+[<span class="nt">I&#39;m an inline-style link with title</span>](<span class="na">https://www.google.com &#34;Google&#39;s Homepage&#34;</span>)
+
+[I&#39;m a reference-style link][arbitrary case-insensitive reference text]
+
+[<span class="nt">I&#39;m a relative reference to a repository file</span>](<span class="na">../blob/master/LICENSE</span>)
+
+[You can use numbers for reference-style link definitions][1]
+
+Or leave it empty and use the [link text itself].
+
+URLs and URLs in angle brackets will automatically get turned into links.
+http://www.example.com or &lt;http://www.example.com&gt;
+
+Some text to show that the reference links can follow later.
+
+[arbitrary case-insensitive reference text]: https://www.mozilla.org
+[1]: http://slashdot.org
+[link text itself]: http://www.reddit.com
+
+</code></pre></div>
+    </div>
+</div>
+
+<p class="divder"></p>
+
+<h2 id="images">Images</h2>
+
+
+
+
+
+
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-images" data-toggle="tab" href="#tabimages"
+            role="tab" aria-controls="nav-home" aria-selected="true">Output</a>
+        <a class="nav-item nav-link" id="nav-images" data-toggle="tab" href="#tabimages-code"
+            role="tab" aria-controls="nav-home" aria-selected="false">Markdown Code</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="images">
+    <div class="tab-pane fade show active" id="tabimages" role="tabpanel" aria-labelledby="nav-images">
+        <p>Here&rsquo;s our logo (hover to see the title text):</p>
+
+<p>Inline-style:
+<img src="https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png" alt="alt text" title="Logo Title Text 1" /></p>
+
+<p>Reference-style:
+<img src="https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png" alt="alt text" title="Logo Title Text 2" /></p>
+
+    </div>
+    <div class="tab-pane fade" id="tabimages-code" role="tabpanel" aria-labelledby="nav-images">
+        <div class="highlight"><pre class="chroma"><code class="language-markdown" data-lang="markdown">
+
+Here&#39;s our logo (hover to see the title text):
+
+Inline-style:
+![<span class="nt">alt text</span>](<span class="na">https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png &#39;Logo Title Text 1&#39;</span>)
+
+Reference-style:
+![alt text][logo]
+
+[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png &#39;Logo Title Text 2&#39;
+
+</code></pre></div>
+    </div>
+</div>
+
+<p class="divder"></p>
+
+<h2 id="code-blocks">Code Blocks</h2>
+
+
+
+
+
+
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-codeblocks" data-toggle="tab" href="#tabcodeblocks"
+            role="tab" aria-controls="nav-home" aria-selected="true">Output</a>
+        <a class="nav-item nav-link" id="nav-codeblocks" data-toggle="tab" href="#tabcodeblocks-code"
+            role="tab" aria-controls="nav-home" aria-selected="false">Markdown Code</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="codeblocks">
+    <div class="tab-pane fade show active" id="tabcodeblocks" role="tabpanel" aria-labelledby="nav-codeblocks">
+        <div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;JavaScript syntax highlighting&#39;</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">s</span> <span class="o">=</span> <span class="s2">&#34;Python syntax highlighting&#34;</span>
+<span class="k">print</span> <span class="n">s</span></code></pre></div>
+<pre><code>No language indicated, so no syntax highlighting.
+But let's throw in a &lt;b&gt;tag&lt;/b&gt;.
+</code></pre>
+
+    </div>
+    <div class="tab-pane fade" id="tabcodeblocks-code" role="tabpanel" aria-labelledby="nav-codeblocks">
+        <div class="highlight"><pre class="chroma"><code class="language-markdown" data-lang="markdown">
+
+<span class="s">```javascript
+</span><span class="s"></span><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;JavaScript syntax highlighting&#39;</span>
+<span class="nx">alert</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+<span class="s">```</span>
+
+<span class="s">```python
+</span><span class="s"></span><span class="n">s</span> <span class="o">=</span> <span class="s2">&#34;Python syntax highlighting&#34;</span>
+<span class="k">print</span> <span class="n">s</span>
+<span class="s">```</span>
+
+<span class="s">```
+</span><span class="s"></span>No language indicated, so no syntax highlighting.
+But let&#39;s throw in a &lt;b&gt;tag&lt;/b&gt;.
+<span class="s">```</span>
+
+</code></pre></div>
+    </div>
+</div>
+
+<p class="divder"></p>
+
+<h2 id="tables">Tables</h2>
+
+
+
+
+
+
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-tables" data-toggle="tab" href="#tabtables"
+            role="tab" aria-controls="nav-home" aria-selected="true">Output</a>
+        <a class="nav-item nav-link" id="nav-tables" data-toggle="tab" href="#tabtables-code"
+            role="tab" aria-controls="nav-home" aria-selected="false">Markdown Code</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="tables">
+    <div class="tab-pane fade show active" id="tabtables" role="tabpanel" aria-labelledby="nav-tables">
+        <p>Colons can be used to align columns.</p>
+
+<table>
+<thead>
+<tr>
+<th>Tables</th>
+<th align="center">Are</th>
+<th align="right">Cool</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>col 3 is</td>
+<td align="center">right-aligned</td>
+<td align="right">\$1600</td>
+</tr>
+
+<tr>
+<td>col 2 is</td>
+<td align="center">centered</td>
+<td align="right">\$12</td>
+</tr>
+
+<tr>
+<td>zebra stripes&hellip;.</td>
+<td align="center">are neat</td>
+<td align="right">\$1</td>
+</tr>
+</tbody>
+</table>
+
+<p>There must be at least 3 dashes separating each header cell.
+The outer pipes (|) are optional, and you don&rsquo;t need to make the
+raw Markdown line up prettily. You can also use inline Markdown.</p>
+
+<table>
+<thead>
+<tr>
+<th>Markdown</th>
+<th>Less</th>
+<th>Pretty</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><em>Still</em></td>
+<td><code>renders</code></td>
+<td><strong>nicely</strong></td>
+</tr>
+
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+    <div class="tab-pane fade" id="tabtables-code" role="tabpanel" aria-labelledby="nav-tables">
+        <div class="highlight"><pre class="chroma"><code class="language-markdown" data-lang="markdown">
+
+Colons can be used to align columns.
+
+| Tables            |      Are      |   Cool |
+| ----------------- | :-----------: | -----: |
+| col 3 is          | right-aligned | \$1600 |
+| col 2 is          |   centered    |   \$12 |
+| zebra stripes.... |   are neat    |    \$1 |
+
+There must be at least 3 dashes separating each header cell.
+The outer pipes (|) are optional, and you don&#39;t need to make the
+raw Markdown line up prettily. You can also use inline Markdown.
+
+| Markdown | Less      | Pretty     |
+| -------- | --------- | ---------- |
+| <span class="ge">_Still_</span>  | <span class="sb">`renders`</span> | <span class="gs">**nicely**</span> |
+| 1        | 2         | 3          |
+
+</code></pre></div>
+    </div>
+</div>
+
+<p class="divder"></p>
+
+<h2 id="blockquotes">BlockQuotes</h2>
+
+<p>TODO: Style blockquotes</p>
+
+
+
+
+
+
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-blockquotes" data-toggle="tab" href="#tabblockquotes"
+            role="tab" aria-controls="nav-home" aria-selected="true">Output</a>
+        <a class="nav-item nav-link" id="nav-blockquotes" data-toggle="tab" href="#tabblockquotes-code"
+            role="tab" aria-controls="nav-home" aria-selected="false">Markdown Code</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="blockquotes">
+    <div class="tab-pane fade show active" id="tabblockquotes" role="tabpanel" aria-labelledby="nav-blockquotes">
+        <blockquote>
+<p>Blockquotes are very handy in email to emulate reply text.
+This line is part of the same quote.</p>
+</blockquote>
+
+<p>Quote break.</p>
+
+<blockquote>
+<p>This is a very long line that will still be quoted properly when it wraps. Oh boy let&rsquo;s keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can <em>put</em> <strong>Markdown</strong> into a blockquote.</p>
+</blockquote>
+
+    </div>
+    <div class="tab-pane fade" id="tabblockquotes-code" role="tabpanel" aria-labelledby="nav-blockquotes">
+        <div class="highlight"><pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="k">
+</span><span class="k">
+</span><span class="k">&gt; </span><span class="ge">Blockquotes are very handy in email to emulate reply text.
+</span><span class="ge"></span><span class="k">&gt; </span><span class="ge">This line is part of the same quote.
+</span><span class="ge"></span>
+Quote break.<span class="k">
+</span><span class="k">
+</span><span class="k">&gt; </span><span class="ge">This is a very long line that will still be quoted properly when it wraps. Oh boy let&#39;s keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can _put_ **Markdown** into a blockquote.
+</span><span class="ge"></span>
 </code></pre></div>
     </div>
 </div>
