@@ -11,8 +11,8 @@
 <meta property="og:description" content="How I setup my personal blog" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/blog/2019/blog-setup/" />
-<meta property="article:published_time" content="2019-04-30T12:18:10-04:00"/>
-<meta property="article:modified_time" content="2019-04-30T12:18:10-04:00"/>
+<meta property="article:published_time" content="2019-05-02T15:50:10-04:00"/>
+<meta property="article:modified_time" content="2019-05-02T15:50:10-04:00"/>
 
     <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Blog Setup"/>
@@ -71,7 +71,7 @@ if (!doNotTrack) {
   <header>
     <h2 class="blog-post-title" dir="auto"><a href="/blog/2019/blog-setup/">Blog Setup</a></h2>
     <p class="blog-post-meta"><time
-        datetime="2019-04-30T12:18:10-04:00">Tue Apr 30, 2019</time>
+        datetime="2019-05-02T15:50:10-04:00">Thu May 2, 2019</time>
       <br>
        
 
@@ -92,11 +92,62 @@ if (!doNotTrack) {
 
 </p>
   </header>
-  <p><a href="https://flaviocopes.com/stack/">https://flaviocopes.com/stack/</a></p>
+  
 
-<p>TODO:
-Automated builds
-<a href="https://willschenk.com/articles/2018/automating_hugo_with_circleci/">https://willschenk.com/articles/2018/automating_hugo_with_circleci/</a></p>
+<h3 id="essentially">Essentially:</h3>
+
+<ul>
+<li><a href="https://gohugo.io/">Hugo</a>
+
+<ul>
+<li>Basically only needed to install the Hugo binary. And then off to the races. Extremely minimal
+dependencies.</li>
+</ul></li>
+<li>From scratch theme based on <a href="https://getbootstrap.com/">Bootstrap 4</a>
+
+<ul>
+<li>Hardest part is picking a theme. Lots of good ones out there, but generally limited customization. So
+I started with the generic framework and moved forward from there. Also allowed me to understand the
+Hugo templating system and relationships</li>
+</ul></li>
+<li>Hosted on <a href="https://github.com/edgarroman/edgarroman.github.io">github</a>
+
+<ul>
+<li>Free and source controled. Why not?</li>
+</ul></li>
+<li>Some customizations
+
+<ul>
+<li>Created shortcode to show <a href="/blog/2019/markdown-examples/">markdown output and code</a></li>
+</ul></li>
+</ul>
+
+<h3 id="still-need-to-do">Still need to do:</h3>
+
+<ul>
+<li>Continue to tweak design
+
+<ul>
+<li>This is a never ending process</li>
+</ul></li>
+<li>Implement client side search
+
+<ul>
+<li>Once there is enough content for that</li>
+</ul></li>
+<li>Implement automated builds
+
+<ul>
+<li>So that once I check in a post, it is auto published</li>
+<li><a href="https://willschenk.com/articles/2018/automating_hugo_with_circleci/">https://willschenk.com/articles/2018/automating_hugo_with_circleci/</a></li>
+</ul></li>
+</ul>
+
+<h3 id="other-interesting-setups">Other interesting setups</h3>
+
+<ul>
+<li><a href="https://flaviocopes.com/stack/">https://flaviocopes.com/stack/</a></li>
+</ul>
 
 
   

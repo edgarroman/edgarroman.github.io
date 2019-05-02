@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright 2019</copyright>
-    <lastBuildDate>Tue, 30 Apr 2019 12:18:10 -0400</lastBuildDate>
+    <lastBuildDate>Thu, 02 May 2019 15:50:10 -0400</lastBuildDate>
     
 	<atom:link href="/tags/blogging/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>Blog Setup</title>
       <link>/blog/2019/blog-setup/</link>
-      <pubDate>Tue, 30 Apr 2019 12:18:10 -0400</pubDate>
+      <pubDate>Thu, 02 May 2019 15:50:10 -0400</pubDate>
       
       <guid>/blog/2019/blog-setup/</guid>
       <description>How I setup my personal blog</description>
