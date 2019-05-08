@@ -1,7 +1,15 @@
 body {
     min-height: 75rem;
     padding-top: 4.5rem;
-    background-image: url('/img/backgrounds/scribble_light_@2X.png');
+    //background-image: url('/img/backgrounds/scribble_light_@2X.png');
+
+    background: -webkit-linear-gradient(90deg, rgb(255, 255, 255), rgb(114, 191, 239));
+    background: linear-gradient(90deg, rgb(255, 255, 255), rgb(114, 191, 239));
+}
+
+.navbar-gradient {
+    background: -webkit-linear-gradient(41deg, rgb(0, 34, 65), rgb(27, 126, 187));
+    background: linear-gradient(41deg, rgb(0, 34, 65), rgb(27, 126, 187));
 }
 
 .card {
