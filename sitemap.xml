@@ -9,14 +9,20 @@
   </url>
   
   <url>
+    <loc>/blog/2019/dont-call-me-webmaster/</loc>
+    <lastmod>2019-07-10T20:00:10-04:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/</loc>
     <lastmod>2019-07-10T20:00:10-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/blog/2019/nonprofits-vs-it/</loc>
+    <loc>/tags/it/</loc>
     <lastmod>2019-07-10T20:00:10-04:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>
@@ -33,6 +39,12 @@
   
   <url>
     <loc>/tags/nonprofit/</loc>
+    <lastmod>2019-07-10T20:00:10-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/technology/</loc>
     <lastmod>2019-07-10T20:00:10-04:00</lastmod>
     <priority>0</priority>
   </url>
