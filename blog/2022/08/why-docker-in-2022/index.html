@@ -1,0 +1,82 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=description content="Why should you use Docker containers in 2022"><meta name=author content="Edgar Román"><title>Why Docker in 2022</title><link rel=canonical href=https://romandc.com/blog/2022/08/why-docker-in-2022/><script defer data-domain=romandc.com src=https://plausible.io/js/plausible.js></script><meta property="og:title" content="Why Docker in 2022"><meta property="og:description" content="Why should you use Docker containers in 2022"><meta property="og:type" content="article"><meta property="og:url" content="https://romandc.com/blog/2022/08/why-docker-in-2022/"><meta property="article:section" content="blog"><meta property="article:published_time" content="2022-08-18T00:00:00-04:00"><meta property="article:modified_time" content="2022-08-18T00:00:00-04:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Why Docker in 2022"><meta name=twitter:description content="Why should you use Docker containers in 2022"><link rel=stylesheet href=https://romandc.com/css/styles.min.7bb47227462eeeebbc193a825e6cb168407c49db0d7c295e66664efe8532b8eb.css integrity=sha256-e7RyJ0Yu7uu8GTqCXmyxaEB8SdsNfCleZmZO/oUyuOs=></head><body><nav class=bg-gray-800><div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8"><div class="relative flex items-center justify-between h-16"><div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start"><div class="flex-shrink-0 flex items-center"><a href=https://romandc.com/ class="text-white font-semibold no-underline visited:text-white">Edgar Román</a></div></div><div class="hidden sm:block inset-y-0 right-0 flex space-x-4 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"><a href=/blog/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+<a href=/projects/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+<a href=/tags/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Tags</a>
+<a href=/about/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">About</a></div></div><div class="pb-4 flex flex-wrap justify-center space-x-6 sm:hidden"><a href=/blog/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+<a href=/projects/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+<a href=/tags/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Tags</a>
+<a href=/about/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">About</a></div></div></nav><main class=container><div class="relative py-0 bg-white overflow-hidden"><div class="relative px-4 sm:px-6 lg:px-8"><div class="text-lg max-w-prose mx-auto"><h1><span class="block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Why Docker in 2022</span>
+<span class="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase"><time datetime=" 2022-08-18T00:00:00-04:00">Thu Aug 18, 2022</time></span>
+<span class="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase py-8"><i class="fa fa-tag" aria-hidden=true></i>
+&nbsp;
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/docker rel=tag>Docker</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/serverless rel=tag>Serverless</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/containers rel=tag>Containers</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/node rel=tag>Node</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/python rel=tag>Python</a></span></span></h1><p>When Docker first became popular a few years ago, I generally dismissed it as a
+fad: Something that the hipsters were adopting just so they could be cool.<br>I mean, why add this extra layer on top of everything and add complexity to your
+development workflow? And any benefit you may glean would be minimal.</p><p>I didn&rsquo;t dive right into containers, but now things have changed. Over the
+past few years, cloud providers have rolled out some fantastic offerings that make
+me want to use Docker. Here are the reasons why using Docker containers in your
+developer workflow make a lot of sense in 2022.</p><h2 id=stable-development-environments>Stable development environments</h2><p>Gone are the days when you have a single development environment that all your projects
+leverage. If you start a handful of projects every year, then keeping those projects
+up to date could take a huge amount of time. In recent history,
+<a href=https://en.wikipedia.org/wiki/History_of_Python#Table_of_versions>Python</a> offers
+an upgrade every year. Using
+<a href=https://en.wikipedia.org/wiki/Node.js#Releases>Node.js</a> means you face a
+new version every six months!</p><p>What I&rsquo;ve experienced is that if I take a break from one of my projects and come back to
+it a year later, I&rsquo;m faced with numerous hours of just upgrading the environment to get
+the darn thing to work!</p><p>While keeping up with the latest security patches is important, I don&rsquo;t always need
+the latest and greatest features in the language. Sometimes I just want it to work
+so I can move on with whatever features I&rsquo;m trying to implement. With containers,
+you can put a project on hold for a little bit and when you return, all the dependencies
+will still be there and, unless you depend on an external service, things should just
+work.</p><h2 id=isolated-development-environments>Isolated development environments</h2><p>Another issue I have run into is having multiple versions of the language installed
+on my system. Python 2? Python 3? Node 12? Node 14? Many projects use a wide spectrum
+of these tools. Nothing drives me crazier than when someone comes up with
+a new shiny tool and asks me to install it globally!</p><p>People have solutions for multiple environments on a single system. Just to name a
+few: <a href=https://docs.python.org/3/library/venv.html>virtual environments</a> for
+Python; <a href=https://github.com/nvm-sh/nvm>nvm</a> and <a href=https://volta.sh/>volta</a> for Node.js.</p><p>Using Docker means that you can create a container that is dedicated to the environment
+and language version of your choice. Each of your projects can have different versions
+of languages and none of them will conflict with your host machine!</p><h2 id=easily-repeatable-development-environments>Easily repeatable development environments</h2><p>If you&rsquo;re working with multiple folks or just working with more than one computer, then
+you may appreciate that containers make sharing easy. All the instructions for building
+your container are checked into your source code repository.</p><p>If a teammate or friend wants to collaborate with you on the project, just point them
+to the source code and they can have an exact replica of your container within minutes. No
+more fussing around with Windows vs Mac vs Linux desktops. They all can participate.</p><p>Another scenario could be that you&rsquo;d like to share your project in a demonstrable stage, but
+not share the source code. You can hand over the built container image and your friend can run
+an instance locally to check out your project. While this does not secure your source code,
+it does make sharing your project more palatable to folks who maybe are not developers.</p><h2 id=easier-continuous-integration>Easier Continuous Integration</h2><p>Since all the instructions on how to build your project are in the source code, then building
+the container image is very easy. You can build it on your personal computer. Or you can
+leverage one of the many cloud-based Continuous Integration (CI) offerings and have them
+build your container anytime you&rsquo;d like. This is most helpful when working on a team,
+but it&rsquo;s important to point out that containers make this step much easier!</p><h2 id=cloud-based-hosting>Cloud based hosting</h2><p>One of the biggest reasons to use containers these days is the plethora of online
+services that will host containers. The biggest drawback in the past was that even if
+you took the time and effort to make your project run in a container - you couldn&rsquo;t run it!
+At least you couldn&rsquo;t run it easily. <a href=https://cloud.google.com/blog/products/containers-kubernetes/from-google-to-the-world-the-kubernetes-origin-story>Kubernetes</a>
+fighting for developer mindshare with Mesos and Docker Swarm. Ultimately Kubernetes became very
+popular and now all major and many minor cloud providers offer some container hosting services.</p><p>Based on your hosting needs, you can run a hobby project in the cloud for free (using various Free Tier offerings)
+or you can run up a robust and geographically redundant flotilla of containers for your production project.
+It&rsquo;s almost too overwhelming to choose from the options.
+In fact, Corey Quinn on the <a href=https://www.lastweekinaws.com/>Last Week in AWS</a> published a blog post on
+<a href=https://www.lastweekinaws.com/blog/the-17-ways-to-run-containers-on-aws/>17 ways to run containers on AWS</a> -
+and then wrote <a href=https://www.lastweekinaws.com/blog/17-more-ways-to-run-containers-on-aws/>another blog post on 17 more ways</a>!</p><h2 id=serverless-ready>Serverless Ready</h2><p>Finally, using containers for your deployment allows you to fully embrace the Serverless movement. Allow
+me to explain the Serverless movement. In any commercial hosting relationship, you, as a project owner, delegate
+some responsibilities to your hosting provider. If you are renting physical rack space in a data center, then
+you allow them to provide a roof, power, and air conditioning. By using containers, you delegate a lot more
+to your provider. Essentially you are just renting CPU cycles from these container providers (although how
+you are billed varies from provider to provider).</p><p>As a project owner, you are free of the responsibility of server management (mostly). If the load on your project
+goes up, then you just rent more CPU cycles. Conversely, if the load goes down, you rent fewer CPU cycles.
+This is the beauty of Serverless: the line of responsibility allows you to focus more on your project&rsquo;s delivered
+value and less on the boring tasks.</p><h2 id=why-not-run-docker-containers>Why <strong>not</strong> run Docker containers?</h2><p>Ok, so we&rsquo;ve discussed the advantages of using containers. What about the downsides?</p><h3 id=docker-licensing>Docker Licensing</h3><p>According to the <a href=https://www.docker.com/pricing/>Docker Pricing page</a>:</p><blockquote><p>Docker Desktop can be used for free as part of a Docker Personal subscription for: small companies (fewer than 250 employees AND less than $10 million in annual revenue), personal use, education, and non-commercial open source projects.</p><p>Docker Desktop requires a per user paid Pro, Team or Business subscription for professional use in larger companies with subscriptions available for as little as $5 per month.</p></blockquote><p>This is a nominal cost for most developers, but something worth considering.</p><h3 id=docker-desktop-overhead>Docker Desktop overhead</h3><p>When running Docker in the background, your computer will use more energy. I have found from
+personal experience that most modern computers handle the load easily.</p><h3 id=only-runs-linux>Only runs Linux</h3><p>Your Docker Container can only run Linux. That&rsquo;s because Docker takes advantage of
+<a href=https://github.com/opencontainers/runc>runC</a> which uses the Linux kernel.
+You can&rsquo;t run Windows <strong>inside</strong> of Docker. But of course you can run Docker on a
+Windows host machine. If you are running a .NET project, you won&rsquo;t
+be able to use Docker. On the other hand, if you&rsquo;re running .NET Core then you&rsquo;re in luck!</p><p>While you may think only using Linux would be limitation, but there are
+<a href=https://en.wikipedia.org/wiki/Linux_distribution>literally hundreds of Linux distributions</a>
+from which to choose.</p><h3 id=complex-workflows>Complex workflows</h3><p>Most developers are taught to develop locally on their machines. While this may be slowly shifting to
+online development, there is a lot of existing momentum. Exacerbating the problem are the myriad
+of options that Docker exposes to use the tool. It&rsquo;s extremely flexible and thus is quite complex
+to set up properly. Facing the task of setting up Docker from scratch is quite intimidating. It
+could cause some developers to have a bad experience and thus resist leveraging a fantastic tool.</p><h2 id=getting-started-with-containers>Getting Started with containers</h2><p>In the next few posts, I would like to propose a flexible but opinionated developer workflow
+for the Python and Node.js environments.</p></div></div></div></main><footer class=page-footer><div class="footer-copyright text-center py-3">©
+<script>document.write((new Date).getFullYear())</script>&nbsp;<a href=/>Edgar Román</a></div></footer></body></html>
