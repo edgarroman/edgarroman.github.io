@@ -76,7 +76,8 @@ local machine. So an empty <code>node_modules</code> is normal.</li></ul><h2 id=
 It&rsquo;s an exact match of what you would deploy in production, but it allows you to view the
 console output to help remove any bugs or errors.</p><p>For this workflow, there is no live reloading of source code.
 So if you make a change to the source code, you&rsquo;ll have to run the build step for every change.</p><h3 id=steps-to-get-up-and-running-1>Steps to get up and running</h3><ol><li><p>Start Docker Desktop on your local machine</p></li><li><p>Navigate to the main project directory (not in <code>server-code</code>)</p></li><li><p>To build the image:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>docker build . --target<span style=color:#f92672>=</span>production -t mynodeapp:1.00
-</code></pre></div><p>A note here on the name of your image. I&rsquo;ve picked <code>mynodeapp</code> as the name and the version as <code>1.00</code>.
+</code></pre></div><p>The <code>--target=production</code> is a very important flag here. It indicates to the build process to strip
+out any development dependencies and extraneous files.</p><p>A note here on the name of your image. I&rsquo;ve picked <code>mynodeapp</code> as the name and the version as <code>1.00</code>.
 I suggest you call your application something that is meaningful to you and follow <a href=https://semver.org/>semantic
 versioning</a></p></li><li><p>To run an instance of your production image locally, run the following command:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>docker run -ti --rm -p 8080:8080 mynodeapp:1.00
 </code></pre></div><p>Another note here is that you&rsquo;re running the production version of your application, but most non-trivial
