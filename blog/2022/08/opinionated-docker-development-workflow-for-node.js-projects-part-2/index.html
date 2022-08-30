@@ -1,0 +1,236 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=description content="Deep dive into how we&rsquo;ve configured Docker to enable the development workflows."><meta name=author content="Edgar Román"><title>Opinionated Docker development workflow for Node.js projects - Part 2</title><link rel=canonical href=https://romandc.com/blog/2022/08/opinionated-docker-development-workflow-for-node.js-projects-part-2/><script defer data-domain=romandc.com src=https://plausible.io/js/plausible.js></script><meta property="og:title" content="Opinionated Docker development workflow for Node.js projects - Part 2"><meta property="og:description" content="Deep dive into how we&rsquo;ve configured Docker to enable the development workflows."><meta property="og:type" content="article"><meta property="og:url" content="https://romandc.com/blog/2022/08/opinionated-docker-development-workflow-for-node.js-projects-part-2/"><meta property="article:section" content="blog"><meta property="article:published_time" content="2022-08-30T00:00:00-06:00"><meta property="article:modified_time" content="2022-08-30T00:00:00-06:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Opinionated Docker development workflow for Node.js projects - Part 2"><meta name=twitter:description content="Deep dive into how we&rsquo;ve configured Docker to enable the development workflows."><link rel=stylesheet href=https://romandc.com/css/styles.min.7bb47227462eeeebbc193a825e6cb168407c49db0d7c295e66664efe8532b8eb.css integrity=sha256-e7RyJ0Yu7uu8GTqCXmyxaEB8SdsNfCleZmZO/oUyuOs=></head><body><nav class=bg-gray-800><div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8"><div class="relative flex items-center justify-between h-16"><div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start"><div class="flex-shrink-0 flex items-center"><a href=https://romandc.com/ class="text-white font-semibold no-underline visited:text-white">Edgar Román</a></div></div><div class="hidden sm:block inset-y-0 right-0 flex space-x-4 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"><a href=/blog/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+<a href=/projects/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+<a href=/tags/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Tags</a>
+<a href=/about/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">About</a></div></div><div class="pb-4 flex flex-wrap justify-center space-x-6 sm:hidden"><a href=/blog/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+<a href=/projects/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+<a href=/tags/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Tags</a>
+<a href=/about/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">About</a></div></div></nav><main class=container><div class="relative py-0 bg-white overflow-hidden"><div class="relative px-4 sm:px-6 lg:px-8"><div class="text-lg max-w-prose mx-auto"><h1><span class="block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Opinionated Docker development workflow for Node.js projects - Part 2</span>
+<span class="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase"><time datetime=" 2022-08-30T00:00:00-06:00">Tue Aug 30, 2022</time></span>
+<span class="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase py-8"><i class="fa fa-tag" aria-hidden=true></i>
+&nbsp;
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/docker rel=tag>Docker</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/serverless rel=tag>Serverless</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/containers rel=tag>Containers</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/node rel=tag>Node</a></span></span></h1><p>In a <a href=/blog/2022/08/why-docker-in-2022/>recent post</a>, I described <strong>why</strong> you&rsquo;d want
+to use Docker to develop server applications. Then I described how to use an
+<a href=/blog/2022/08/opinionated-docker-development-workflow-for-node.js-projects-part-1/>opinionated workflow</a>.
+In this post, I&rsquo;ll describe how the workflow works under the covers.</p><p>If you haven&rsquo;t read <a href=/blog/2022/08/opinionated-docker-development-workflow-for-node.js-projects-part-1/>part 1</a>,
+I strongly suggest you check it out now.</p><h2 id=directory-structure-and-files>Directory Structure and Files</h2><p>Remember the directory structure? We established a clear directory structure that
+isolates all your application specific code into a single sub-folder and the top
+level directory holds all the workflow files.</p><p>It looks like this:</p><pre><code>└── Main_Project_Directory/
+    ├── server-code/
+    │   ├── server.js
+    │   ├── package.json
+    │   └── ... (All your other source code files)
+    ├── .gitignore
+    ├── .dockerignore
+    ├── Dockerfile
+    ├── docker-compose.yml
+    └── README.md
+</code></pre><h2 id=dockerfile>Dockerfile</h2><p>Here&rsquo;s the complete <code>Dockerfile</code></p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Base node images can be found here: https://hub.docker.com/_/node?tab=description&amp;amp%3Bpage=1&amp;amp%3Bname=alpine</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ARG</span> NODE_IMAGE<span style=color:#f92672>=</span>node:16.17-alpine<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Base Image</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># All these commands are common to both development and production builds</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>FROM</span><span style=color:#e6db74> $NODE_IMAGE AS base</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ARG</span> NPM_VERSION<span style=color:#f92672>=</span>npm@8.18.0<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># While root is the default user to run as, why not be explicit?</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>USER</span><span style=color:#e6db74> root</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Run tini as the init process and it will clean zombie processes as needed</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Generally you can achieve this same effect by adding `--init` in your `docker RUN` command</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># And Nodejs servers tend not to spawn processes, so this is belt and suspenders</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># More info: https://github.com/krallin/tini</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> apk add --no-cache tini<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Tini is now available at /sbin/tini</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ENTRYPOINT</span> [<span style=color:#e6db74>&#34;/sbin/tini&#34;</span>, <span style=color:#e6db74>&#34;--&#34;</span>]<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Upgrade some global packages</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> npm install -g $NPM_VERSION<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Specific to your framework</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Some frameworks force a global install tool such as aws-amplify or firebase.  Run those commands here</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># RUN npm install -g firebase</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Create space for our code to live</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> mkdir -p /home/node/app <span style=color:#f92672>&amp;&amp;</span> chown -R node:node /home/node/app<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>WORKDIR</span><span style=color:#e6db74> /home/node/app</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Switch to the `node` user instead of running as `root` for improved security</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>USER</span><span style=color:#e6db74> node</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Expose the port to listen on here.  Express uses 8080 by default so we&#39;ll set that here.</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ENV</span> PORT<span style=color:#f92672>=</span><span style=color:#ae81ff>8080</span>
+<span style=color:#66d9ef>EXPOSE</span><span style=color:#e6db74> $PORT</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Development build</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># These commands are unique to the development builds</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>FROM</span><span style=color:#e6db74> base AS development</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Copy the package.json file over and run `npm install`</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>COPY</span> server-code/package*.json ./<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> npm install<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Now copy rest of the code.  We separate these copies so that Docker can cache the node_modules directory</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># So only when you add/remove/update package.json file will Docker rebuild the node_modules dir.</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>COPY</span> server-code ./<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Finally, if the container is run in headless, non-interactive mode, start up node</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># This can be overridden by the user running the Docker CLI by specifying a different endpoint</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>CMD</span> [<span style=color:#e6db74>&#34;npx&#34;</span>, <span style=color:#e6db74>&#34;nodemon&#34;</span>,<span style=color:#e6db74>&#34;server.js&#34;</span>]<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Production build</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># These commands are unique to the production builds</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>FROM</span><span style=color:#e6db74> base AS production</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Indicate to all processes in the container that this is a production build</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ARG</span> NODE_ENV<span style=color:#f92672>=</span>production
+<span style=color:#66d9ef>ENV</span> NODE_ENV<span style=color:#f92672>=</span><span style=color:#e6db74>${</span>NODE_ENV<span style=color:#e6db74>}</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Now copy all source code</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>COPY</span> --chown<span style=color:#f92672>=</span>node:node server-code ./<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> npm install <span style=color:#f92672>&amp;&amp;</span> npm cache clean --force<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Finally, if the container is run in headless, non-interactive mode, start up node</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># This can be overridden by the user running the Docker CLI by specifying a different endpoint</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>CMD</span> [<span style=color:#e6db74>&#34;node&#34;</span>,<span style=color:#e6db74>&#34;server.js&#34;</span>]<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><h3 id=dockerfile-version-management-and-multi-stage>Dockerfile: Version Management and Multi-Stage</h3><p>Let&rsquo;s start at the top of the file:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Base node images can be found here: https://hub.docker.com/_/node?tab=description&amp;amp%3Bpage=1&amp;amp%3Bname=alpine</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ARG</span> NODE_IMAGE<span style=color:#f92672>=</span>node:16.17-alpine<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Base Image</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># All these commands are common to both development and production builds</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>FROM</span><span style=color:#e6db74> $NODE_IMAGE AS base</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ARG</span> NPM_VERSION<span style=color:#f92672>=</span>npm@8.18.0<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>First we know that versions of Node.js and npm change over time. These are critical dependencies
+so we put them up front at the top so developers can update them when starting a new
+project.</p><p>Also note that this is a <a href=https://docs.docker.com/develop/develop-images/multistage-build/>multi-stage Dockerfile</a>.
+This is to accommodate a single file for both development and production builds. So we have:</p><ol><li>A common <code>base</code> target</li><li>A <code>development</code> target</li><li>a <code>production</code> target</li></ol><h3 id=dockerfile-base-stage>Dockerfile: Base stage</h3><p>These are the commands in the Dockerfile for the <code>base</code> stage</p><p>We explicilty set the user to be <code>root</code> for the next several instructions</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># While root is the default user to run as, why not be explicit?</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>USER</span><span style=color:#e6db74> root</span><span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>We&rsquo;re adding a handler to capture termination signals from the system to gracefully shutdown.
+While not super important for Node.js containers, it&rsquo;s a good practice in case
+we want to use this Dockerfile for other languages such as Python. More details
+can be found at <a href=https://github.com/krallin/tini>https://github.com/krallin/tini</a>.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Run tini as the init process and it will clean zombie processes as needed</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Generally you can achieve this same effect by adding `--init` in your `docker RUN` command</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># And Nodejs servers tend not to spawn processes, so this is belt and suspenders</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># More info: https://github.com/krallin/tini</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> apk add --no-cache tini<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Tini is now available at /sbin/tini</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ENTRYPOINT</span> [<span style=color:#e6db74>&#34;/sbin/tini&#34;</span>, <span style=color:#e6db74>&#34;--&#34;</span>]<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>We install the specified version of <code>npm</code> here. We also have the opportunity to install
+other packages that are required to be global here just as <code>aws-amplify</code> or <code>firebase</code>.<br>While I hope the trend of requiring global pacakages goes away, we can easily support
+it using Docker. Be sure to identify a specific version of your global package to
+prevent nasty surprises later!</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Upgrade some global packages</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> npm install -g $NPM_VERSION<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Specific to your framework</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Some frameworks force a global install tool such as aws-amplify or firebase.  Run those commands here</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># RUN npm install -g firebase</span><span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>Create an arbitrary location for the container to store your code. You can call this
+anything you&rsquo;d like, but we&rsquo;re following the tradional Linux approach here for consistency.
+Note that we also have to change the ownership of this directory to the proper user (called <code>node</code>)
+so that the user can properly create/read/write files in this directory.</p><p>So your application will live in the directory <code>/home/node/app</code>. Finally, switch subsequent
+build instructions to be executed by the <code>node</code>. This follows the
+<a href=https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user>recommended best practices</a></p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Create space for our code to live</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> mkdir -p /home/node/app <span style=color:#f92672>&amp;&amp;</span> chown -R node:node /home/node/app<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>WORKDIR</span><span style=color:#e6db74> /home/node/app</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Switch to the `node` user instead of running as `root` for improved security</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>USER</span><span style=color:#e6db74> node</span><span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>Expose the port on which the application will listen. This is configurable, but must be changed
+in several files.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Expose the port to listen on here.  Express uses 8080 by default so we&#39;ll set that here.</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ENV</span> PORT<span style=color:#f92672>=</span><span style=color:#ae81ff>8080</span>
+<span style=color:#66d9ef>EXPOSE</span><span style=color:#e6db74> $PORT</span><span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><h3 id=dockerfile-development-stage>Dockerfile: Development stage</h3><p>These are the commands in the Dockerfile for the <code>development</code> stage.<br>When doing a build, you must specify the stage using the flag: <code>--target=development</code>.</p><p>First we copy over the <code>package.json</code> file from the <code>server-code</code> directory into the working
+directory <code>/home/node/app</code> (set above by <code>WORKDIR</code>). We also include any <code>package-lock.json</code> files.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Development build</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># These commands are unique to the development builds</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>FROM</span><span style=color:#e6db74> base AS development</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Copy the package.json file over and run `npm install`</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>COPY</span> server-code/package*.json ./<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>Next, we run <code>npm install</code> to establish all the application dependencies including development
+dependencies.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#66d9ef>RUN</span> npm install<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>Then we copy the rest of the code. As the comment states, we separate this step for build optimization.
+If we don&rsquo;t modify the package requirements, then we won&rsquo;t have to rebuild the <code>npm install</code> step which
+could take a long time. More often, we&rsquo;ll be changing just the application source code, so subsequent
+builds would be very fast.</p><p>And finally, we run <code>npx nodemon server.js</code> to start the application using <code>nodemon</code> to reload the
+code when it changes.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Now copy rest of the code.  We separate these copies so that Docker can cache the node_modules directory</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># So only when you add/remove/update package.json file will Docker rebuild the node_modules dir.</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>COPY</span> server-code ./<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Finally, if the container is run in headless, non-interactive mode, start up node</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># This can be overridden by the user running the Docker CLI by specifying a different endpoint</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>CMD</span> [<span style=color:#e6db74>&#34;npx&#34;</span>, <span style=color:#e6db74>&#34;nodemon&#34;</span>,<span style=color:#e6db74>&#34;server.js&#34;</span>]<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><h3 id=dockerfile-production-stage>Dockerfile: Production stage</h3><p>These are the commands in the Dockerfile for the <code>development</code> stage.<br>When doing a build, you must specify the stage using the flag: <code>--target=development</code>.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Production build</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># These commands are unique to the production builds</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e>#####################################################################</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>FROM</span><span style=color:#e6db74> base AS production</span><span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>Set some environment variables so all downstream scripts can discover this is a production build
+and act accordingly.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Indicate to all processes in the container that this is a production build</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>ARG</span> NODE_ENV<span style=color:#f92672>=</span>production
+<span style=color:#66d9ef>ENV</span> NODE_ENV<span style=color:#f92672>=</span><span style=color:#e6db74>${</span>NODE_ENV<span style=color:#e6db74>}</span><span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>Copy over all the source code at once. We are going to do a full <code>npm install</code> so there&rsquo;s no need
+to break up the multiple copy steps like we did in the development stage. After we do the install,
+we tell <code>npm</code> to clear it&rsquo;s cache in an attempt to make the image size smaller.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Now copy all source code</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>COPY</span> --chown<span style=color:#f92672>=</span>node:node server-code ./<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> npm install <span style=color:#f92672>&amp;&amp;</span> npm cache clean --force<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><p>Here we kick off the application by telling <code>node</code> to run the application <code>server.js</code>.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=color:#75715e># Finally, if the container is run in headless, non-interactive mode, start up node</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># This can be overridden by the user running the Docker CLI by specifying a different endpoint</span><span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>CMD</span> [<span style=color:#e6db74>&#34;node&#34;</span>,<span style=color:#e6db74>&#34;server.js&#34;</span>]<span style=color:#960050;background-color:#1e0010>
+</span></code></pre></div><h2 id=development-mode-without-docker-compose>Development Mode without Docker Compose</h2><p>We&rsquo;ll show how to use this Dockerfile using just the command line interface (CLI). In the next section,
+we&rsquo;ll simplify this with Docker Compose.</p><ol><li><p>If this the first time you are running the container, or if you have changed <em>any</em> package dependencies, then run:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>docker build . -t mynodeapp:DEV --target<span style=color:#f92672>=</span>development
+</code></pre></div><p>This will build the image using the development stage instructions from the Dockerfile. Note that you
+have to call it something, so we&rsquo;re using <code>mynodeapp</code> with the version of <code>DEV</code>. Using <code>DEV</code> helps
+to avoid production deployment since it&rsquo;s not using semantic versioning.</p></li><li><p>To run the container, type the following command:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>docker run -ti --rm -p 8080:8080 -v <span style=color:#e6db74>&#34;</span><span style=color:#66d9ef>$(</span>pwd<span style=color:#66d9ef>)</span><span style=color:#e6db74>/server-code:/home/node/app&#34;</span> -v /home/node/app/node_modules mynodeapp:DEV
+</code></pre></div></li></ol><p>What you should see is Docker will start to run your container
+in the terminal window and any console messages will appear as they are printed out.</p><p>Changes to the source code should trigger a reload of Node and will be reflected in the console.</p><p><strong>Notes</strong></p><ul><li>If you make any changes to dependent packages, then you&rsquo;ll have to run the <code>docker build</code> command as shown above. Any time you add / remove a package or update the version.</li><li>We assume that node will be running on port 8080. If this is not the case for your project, feel free to change it, but make sure to change it everywhere.</li></ul><p>This workflow is made possible by some clever Docker commands. We&rsquo;ll expand on the command above here:</p><ul><li><code>docker run</code>: This is the primary Docker command to take a container image and run it</li><li><code>-ti</code>: This instructs Docker to run this container interactively so you can see the output console</li><li><code>--rm</code>: After you exit the container instance by pressing <code>Ctrl-c</code> this flag instructs Docker to clean up after the container</li><li><code>-p 8080:8080</code>: Ensure port 8080 on the container is mapped to port 8080 on your local machine so you can use <code>http://localhost:8080</code></li><li><code>-v "$(pwd)/server-code:/home/node/app"</code>: This maps the directory <code>server-code</code> (along with your source code) into the container directory <code>/home/node/app</code>. So your source code and everything in the <code>server-code</code> directory is available in the container.</li><li><code>-v /home/node/app/node_modules</code>: This is a special command that excludes the <code>node_modules</code> directory on your local machine and instead keeps the container&rsquo;s <code>node_modules</code> directory that was created during the build phase. This is important because the <code>node_modules</code> on your local machine may be full of packages that are specific to the local machine operating system. And since we want the packages for the container, this flag makes that one directory take priority.</li><li><code>mynodeapp:DEV</code>: This is whatever you want to call your container image. We tag this image with <code>DEV</code> to make sure you don&rsquo;t accidentaly deploy this version.</li></ul><h2 id=development-mode-simplified-with-docker-compose>Development Mode simplified with Docker Compose</h2><p>The commands to enable this workflow are very long, complex, and diffcult to remember.
+To simplify this workflow, we have a few options. One common option is create shell scripts for the commands above. This works, but will be operating system specific (e.g. Windows will need a different solution than most shells).</p><p>We can use Docker Compose to simplify our workflow. Docker Compose is a tool that
+allows you to put all the commands into a file that does the work for you.
+It also allows you to spin up multiple containers at the same time. This is useful if you
+have to spin up both a web server and a database server for local development. That scenario is
+outside the scope of this post.</p><p>Note that the Docker Compose we are going to show here is for development flow only.</p><p>First, create the <code>docker-compose.yml</code> file:</p><pre><code>services:
+  app:
+    build:
+      context: .
+      target: development
+      args:
+        - NODE_ENV=development
+    environment:
+        - NODE_ENV=development
+    ports:
+      - &quot;8080:8080&quot;
+    volumes:
+      - ./server-code:/home/node/app
+      - /home/node/app/node_modules
+</code></pre><p>Note that we&rsquo;ve put the same command line arguments shown earlier into to the file itself.
+So that makes it easy to build:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>docker compose build
+</code></pre></div><p>And <strong>really</strong> easy to run:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>docker compose up
+</code></pre></div><p>And when you&rsquo;re finished</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>docker compose down
+</code></pre></div><h2 id=conclusion>Conclusion</h2><p>And that&rsquo;s about it. Don&rsquo;t forget the <code>.dockerignore</code> and optionally the <code>.gitignore</code> but you can
+customize those as you see fit.</p></div></div></div></main><footer class=page-footer><div class="footer-copyright text-center py-3">©
+<script>document.write((new Date).getFullYear())</script>&nbsp;<a href=/>Edgar Román</a></div></footer></body></html>
