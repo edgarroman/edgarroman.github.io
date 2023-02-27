@@ -1,0 +1,204 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=description content="Quick tutorial on how to transcribe audio files to text using S3 and AWS Transcribe"><meta name=author content="Edgar Román"><title>Transcribing audio uploaded to S3</title><link rel=canonical href=https://romandc.com/blog/2023/02/transcribing-audio-uploaded-to-s3/><script defer data-domain=romandc.com src=https://plausible.io/js/plausible.js></script><meta property="og:title" content="Transcribing audio uploaded to S3"><meta property="og:description" content="Quick tutorial on how to transcribe audio files to text using S3 and AWS Transcribe"><meta property="og:type" content="article"><meta property="og:url" content="https://romandc.com/blog/2023/02/transcribing-audio-uploaded-to-s3/"><meta property="article:section" content="blog"><meta property="article:published_time" content="2023-02-27T00:00:00-04:00"><meta property="article:modified_time" content="2023-02-27T00:00:00-04:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Transcribing audio uploaded to S3"><meta name=twitter:description content="Quick tutorial on how to transcribe audio files to text using S3 and AWS Transcribe"><link rel=stylesheet href=https://romandc.com/css/styles.min.7bb47227462eeeebbc193a825e6cb168407c49db0d7c295e66664efe8532b8eb.css integrity=sha256-e7RyJ0Yu7uu8GTqCXmyxaEB8SdsNfCleZmZO/oUyuOs=></head><body><nav class=bg-gray-800><div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8"><div class="relative flex items-center justify-between h-16"><div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start"><div class="flex-shrink-0 flex items-center"><a href=https://romandc.com/ class="text-white font-semibold no-underline visited:text-white">Edgar Román</a></div></div><div class="hidden sm:block inset-y-0 right-0 flex space-x-4 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"><a href=/blog/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+<a href=/projects/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+<a href=/tags/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Tags</a>
+<a href=/about/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">About</a></div></div><div class="pb-4 flex flex-wrap justify-center space-x-6 sm:hidden"><a href=/blog/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Blog</a>
+<a href=/projects/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+<a href=/tags/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">Tags</a>
+<a href=/about/ class="text-gray-300 hover:bg-gray-700 hover:text-white no-underline visited:text-white px-3 py-2 rounded-md text-sm font-medium">About</a></div></div></nav><main class=container><div class="relative py-0 bg-white overflow-hidden"><div class="relative px-4 sm:px-6 lg:px-8"><div class="text-lg max-w-prose mx-auto"><h1><span class="block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Transcribing audio uploaded to S3</span>
+<span class="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase"><time datetime=" 2023-02-27T00:00:00-04:00">Mon Feb 27, 2023</time></span>
+<span class="block text-base text-center text-indigo-600 font-semibold tracking-wide uppercase py-8"><i class="fa fa-tag" aria-hidden=true></i>
+&nbsp;
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/aws-transcribe rel=tag>AWS Transcribe</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/aws rel=tag>AWS</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/s3 rel=tag>S3</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/serverless rel=tag>Serverless</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/lambda rel=tag>Lambda</a></span>
+<span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"><a href=/tags/python rel=tag>Python</a></span></span></h1><p>My sister had an interesting challenge for me recently. She had some audio that needed to be automatically run through <a href=https://aws.amazon.com/transcribe/>AWS Transcribe</a> from files uploaded to S3.</p><p>Initially I thought that AWS Step Functions would be great, but opted for a simpler solution using direct events. Normally a workflow tool would be more flexible for more complex solutions and hard coding event driven events tend to make solutions brittle when future changes come, but often simple is better.</p><h2 id=architecture-overview>Architecture Overview</h2><p>Here&rsquo;s a high level overview of the flow:</p><p><img src=overview.png alt="High Level Diagram"></p><p>We can describe the flow thus:</p><ol><li>User uploads audio file (in mp3 format) to the <code>uploads/</code> folder in the bucket</li><li>Event Bridge detects the created object and triggers the <code>Start Transcribe Job</code> lambda function</li><li>The <code>Start Transcribe Job</code> lambda initiates the AWS Transcribe Job and exits</li><li>AWS Transcribe completes the conversion from audio to text and writes the file back to the S3 bucket in the <code>output/</code> folder</li><li>Event Bridge detects a state change in the AWS Transcribe job and triggers the <code>Cleanup</code> lambda function</li></ol><h2 id=guide>Guide</h2><p>Let&rsquo;s get into the how to build this system using the AWS console. Once you are familiar with the important steps, you may automate this process using an automated tool like <a href=https://www.terraform.io/>Terraform</a></p><h3 id=create-the-bucket>Create the bucket</h3><ol><li>Load up the AWS console for S3: <a href=https://s3.console.aws.amazon.com/s3/buckets>https://s3.console.aws.amazon.com/s3/buckets</a></li><li>Click on the &ldquo;Create Bucket&rdquo; button</li><li>Enter the bucket name and you can accept all default options. In this example I put in:<ul><li><strong>Name:</strong> <code>transcribe-workflow-experiment</code></li></ul></li><li>Once created, if you click on the bucket you should see a button for &ldquo;Create Folder&rdquo;. Use this button to create:<ul><li>A folder named <code>uploads</code></li><li>A folder named <code>output</code></li></ul></li></ol><h3 id=create-your-start-transcribe-job-lambda>Create your &ldquo;Start Transcribe Job&rdquo; Lambda</h3><ol><li>Load up the lambda part of the AWS Console: <a href=https://us-east-1.console.aws.amazon.com/lambda/home>https://us-east-1.console.aws.amazon.com/lambda/home</a></li><li>Click on &ldquo;Create Function&rdquo;</li><li>Use the following settings:<ul><li><strong>Name:</strong> transcribe-workflow-start-transcribe</li><li><strong>RunTime:</strong> Python 3.9</li><li><strong>Architecture:</strong> x86_64</li></ul></li><li>And accept all other default parameters by clicking &lsquo;Create Function&rsquo;</li></ol><h3 id=enhance-the-lambda-iam-role>Enhance the Lambda IAM role</h3><p>When creating a new Lambda function, the default AWS settings will automatically create an IAM role associated with the function. This IAM roll will have the bare minimum permissions to execute the Lambda function and almost nothing else. We will need to add additional permissions to the IAM role in order to complete this overall architecture.</p><ol><li><p>Once the Lambda function is created, click to see the details.</p></li><li><p>Click on &lsquo;Configuration&rsquo;</p></li><li><p>Then click on the &lsquo;Role Name&rsquo; and it should open a new tab</p></li><li><p>You should now see the IAM permissions for the role associated with your Lambda function. We need to add the ability to:</p><ul><li>Access the S3 bucket we created previously</li><li>Start AWS Transcribe jobs</li></ul></li><li><p>First, we add S3 access. Click on the &lsquo;Add Permissions&rsquo; dropdown and select &lsquo;Create Inline Policy&rsquo;. Click on the &lsquo;JSON&rsquo; tab and input the following policy and click &lsquo;Review Policy&rsquo;. Make sure your bucket name you added replaces <code>transcribe-workflow-experiment</code> in the JSON.</p></li></ol><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#f92672>&#34;Version&#34;</span>: <span style=color:#e6db74>&#34;2012-10-17&#34;</span>,
+    <span style=color:#f92672>&#34;Statement&#34;</span>: [
+        {
+            <span style=color:#f92672>&#34;Sid&#34;</span>: <span style=color:#e6db74>&#34;ListObjectsInBucket&#34;</span>,
+            <span style=color:#f92672>&#34;Effect&#34;</span>: <span style=color:#e6db74>&#34;Allow&#34;</span>,
+            <span style=color:#f92672>&#34;Action&#34;</span>: [<span style=color:#e6db74>&#34;s3:ListBucket&#34;</span>],
+            <span style=color:#f92672>&#34;Resource&#34;</span>: [<span style=color:#e6db74>&#34;arn:aws:s3:::transcribe-workflow-experiment&#34;</span>]
+        },
+        {
+            <span style=color:#f92672>&#34;Sid&#34;</span>: <span style=color:#e6db74>&#34;AllObjectActions&#34;</span>,
+            <span style=color:#f92672>&#34;Effect&#34;</span>: <span style=color:#e6db74>&#34;Allow&#34;</span>,
+            <span style=color:#f92672>&#34;Action&#34;</span>: <span style=color:#e6db74>&#34;s3:*Object&#34;</span>,
+            <span style=color:#f92672>&#34;Resource&#34;</span>: [<span style=color:#e6db74>&#34;arn:aws:s3:::transcribe-workflow-experiment/*&#34;</span>]
+        }
+    ]
+}
+</code></pre></div><ol><li>On the next screen, name like policy something descriptive like: &ldquo;allow-bucket-access-for-transcribe-workflow&rdquo;.</li><li>Now we add permission to start AWS Transcribe jobs. Repeat the same steps with a new policy and this JSON:</li></ol><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#f92672>&#34;Version&#34;</span>: <span style=color:#e6db74>&#34;2012-10-17&#34;</span>,
+    <span style=color:#f92672>&#34;Statement&#34;</span>: [
+        {
+            <span style=color:#f92672>&#34;Sid&#34;</span>: <span style=color:#e6db74>&#34;AllowTranscribeJobs&#34;</span>,
+            <span style=color:#f92672>&#34;Effect&#34;</span>: <span style=color:#e6db74>&#34;Allow&#34;</span>,
+            <span style=color:#f92672>&#34;Action&#34;</span>: <span style=color:#e6db74>&#34;transcribe:StartTranscriptionJob&#34;</span>,
+            <span style=color:#f92672>&#34;Resource&#34;</span>: <span style=color:#e6db74>&#34;*&#34;</span>
+        }
+    ]
+}
+</code></pre></div><h3 id=add-the-lambda-code>Add the Lambda code</h3><p>Next, we populate the python code that runs the Lambda function. You can see the code below is pretty straightforward, but there a couple things to note:</p><ul><li>The Lambda function does not actually interact directly with S3. So why did we add the IAM policy for S3 access? Because the AWS Transcribe job will use the same IAM role of the Lambda function that called it by default.</li><li>The function instructs AWS Transcribe to output the results back to the same bucket, but to a different folder. See the parameters <code>OutputBucketName</code> and <code>OutputKey</code>.</li><li>The output file will be named after the <code>TranscriptionJobName</code>. So we add a little utility function to &lsquo;slugify&rsquo; the filename. To wit: &ldquo;Audio File #3.mp3&rdquo; becomes &ldquo;audio-file-3-mp3&rdquo;.</li><li>Additional Transcribe options can be added as you see fit. E.g. Leveraging a custom dictionary.</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> json
+<span style=color:#f92672>import</span> boto3
+<span style=color:#f92672>import</span> logging
+
+log <span style=color:#f92672>=</span> logging<span style=color:#f92672>.</span>getLogger()
+log<span style=color:#f92672>.</span>setLevel(logging<span style=color:#f92672>.</span>INFO)
+
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>lambda_handler</span>(event, context):
+    transcribe <span style=color:#f92672>=</span> boto3<span style=color:#f92672>.</span>client(<span style=color:#e6db74>&#34;transcribe&#34;</span>)
+
+    log<span style=color:#f92672>.</span>info(<span style=color:#e6db74>&#34;transcribe-workflow-start-job started...&#34;</span>)
+
+    <span style=color:#66d9ef>if</span> event:
+        bucket <span style=color:#f92672>=</span> event[<span style=color:#e6db74>&#34;detail&#34;</span>][<span style=color:#e6db74>&#34;bucket&#34;</span>][<span style=color:#e6db74>&#34;name&#34;</span>]
+        key <span style=color:#f92672>=</span> event[<span style=color:#e6db74>&#34;detail&#34;</span>][<span style=color:#e6db74>&#34;object&#34;</span>][<span style=color:#e6db74>&#34;key&#34;</span>]
+        <span style=color:#75715e># The job name is important because the output file will be named after</span>
+        <span style=color:#75715e># the original audio file name, but &#39;slugified&#39;.  This means it contains</span>
+        <span style=color:#75715e># only lower case characters, numbers, and hyphens</span>
+        job_name <span style=color:#f92672>=</span> slugify(key<span style=color:#f92672>.</span>split(<span style=color:#e6db74>&#34;/&#34;</span>)[<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>])
+        log<span style=color:#f92672>.</span>info(
+            f<span style=color:#e6db74>&#34;transcribe-workflow-start-job: received the following file {bucket} {key}&#34;</span>
+        )
+        s3_uri <span style=color:#f92672>=</span> f<span style=color:#e6db74>&#34;s3://{bucket}/{key}&#34;</span>
+        <span style=color:#75715e># Kick off the transcription job</span>
+        transcribe<span style=color:#f92672>.</span>start_transcription_job(
+            TranscriptionJobName<span style=color:#f92672>=</span>job_name,
+            Media<span style=color:#f92672>=</span>{<span style=color:#e6db74>&#34;MediaFileUri&#34;</span>: s3_uri},
+            LanguageCode<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;en-US&#34;</span>,
+            OutputBucketName<span style=color:#f92672>=</span>bucket,
+            OutputKey<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;output/&#34;</span>,
+        )
+
+    <span style=color:#66d9ef>return</span> {<span style=color:#e6db74>&#34;statusCode&#34;</span>: <span style=color:#ae81ff>200</span>, <span style=color:#e6db74>&#34;body&#34;</span>: <span style=color:#e6db74>&#34;Lambda: Start Transcribe Complete&#34;</span>}
+
+
+<span style=color:#75715e># Small slugify code taken from:</span>
+<span style=color:#75715e># https://gist.github.com/gergelypolonkai/1866fd363f75f4da5f86103952e387f6</span>
+<span style=color:#75715e># Converts &#34;Audio File #3.mp3&#34; to &#34;audio-file-3-mp3&#34;</span>
+<span style=color:#75715e>#</span>
+<span style=color:#f92672>import</span> re
+<span style=color:#f92672>from</span> unicodedata <span style=color:#f92672>import</span> normalize
+
+_punctuation_re <span style=color:#f92672>=</span> re<span style=color:#f92672>.</span>compile(<span style=color:#e6db74>r</span><span style=color:#e6db74>&#39;[\t !&#34;#$%&amp;</span><span style=color:#ae81ff>\&#39;</span><span style=color:#e6db74>()*\-/&lt;=&gt;?@\[</span><span style=color:#ae81ff>\\</span><span style=color:#e6db74>\]^_`{|},.]+&#39;</span>)
+
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>slugify</span>(text, delim<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;-&#34;</span>):
+    <span style=color:#e6db74>&#34;&#34;&#34;
+</span><span style=color:#e6db74>    Generate an ASCII-only slug.
+</span><span style=color:#e6db74>    &#34;&#34;&#34;</span>
+
+    result <span style=color:#f92672>=</span> []
+    <span style=color:#66d9ef>for</span> word <span style=color:#f92672>in</span> _punctuation_re<span style=color:#f92672>.</span>split(text<span style=color:#f92672>.</span>lower()):
+        word <span style=color:#f92672>=</span> normalize(<span style=color:#e6db74>&#34;NFKD&#34;</span>, word)<span style=color:#f92672>.</span>encode(<span style=color:#e6db74>&#34;ascii&#34;</span>, <span style=color:#e6db74>&#34;ignore&#34;</span>)<span style=color:#f92672>.</span>decode(<span style=color:#e6db74>&#34;utf-8&#34;</span>)
+
+        <span style=color:#66d9ef>if</span> word:
+            result<span style=color:#f92672>.</span>append(word)
+
+    <span style=color:#66d9ef>return</span> delim<span style=color:#f92672>.</span>join(result)
+</code></pre></div><h3 id=create-the-cleanup-lambda-function>Create the Cleanup Lambda function</h3><p>Once the transcribe job is complete, we want this function to clean up a bit. Tasks needed:</p><ul><li>Move the original audio file to a <code>completed</code> folder or <code>failed</code> folder depending on the job outcome</li><li>(Optional) Delete the transcription job. Even though AWS Transcribe automatically deletes jobs after 90 days, it could reduce clutter in the AWS console</li><li>(Optional) Contact a user with a notification that a job has completed</li></ul><p>For this blog post, we will only manage the original audio file. We primarily wanted to highlight the capability of a post-processing Lambda function.</p><ol><li>Load up the Lambda part of the AWS Console: <a href=https://us-east-1.console.aws.amazon.com/lambda/home>https://us-east-1.console.aws.amazon.com/lambda/home</a></li><li>Click on &ldquo;Create Function&rdquo;</li><li>Use the following settings:<ul><li><strong>Name:</strong> transcribe-workflow-transcribe-completed</li><li><strong>RunTime:</strong> Python 3.9</li><li><strong>Architecture:</strong> x86_64</li></ul></li><li>And accept all other default parameters by clicking &lsquo;Create Function&rsquo;</li></ol><p>Once complete, insert the following code:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> json
+<span style=color:#f92672>import</span> boto3
+<span style=color:#f92672>import</span> logging
+
+log <span style=color:#f92672>=</span> logging<span style=color:#f92672>.</span>getLogger()
+log<span style=color:#f92672>.</span>setLevel(logging<span style=color:#f92672>.</span>INFO)
+
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>lambda_handler</span>(event, context):
+
+    transcribe <span style=color:#f92672>=</span> boto3<span style=color:#f92672>.</span>client(<span style=color:#e6db74>&#34;transcribe&#34;</span>)
+    s3 <span style=color:#f92672>=</span> boto3<span style=color:#f92672>.</span>client(<span style=color:#e6db74>&#34;s3&#34;</span>)
+
+    log<span style=color:#f92672>.</span>info(f<span style=color:#e6db74>&#34;transcribe-workflow-cleanup started...&#34;</span>)
+
+    <span style=color:#66d9ef>if</span> event:
+        job_name <span style=color:#f92672>=</span> event[<span style=color:#e6db74>&#34;detail&#34;</span>][<span style=color:#e6db74>&#34;TranscriptionJobName&#34;</span>]
+        log<span style=color:#f92672>.</span>info(f<span style=color:#e6db74>&#34;Transcribe job: {job_name}&#34;</span>)
+
+        response <span style=color:#f92672>=</span> transcribe<span style=color:#f92672>.</span>get_transcription_job(TranscriptionJobName<span style=color:#f92672>=</span>job_name)
+        <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> response:
+            <span style=color:#66d9ef>return</span> {<span style=color:#e6db74>&#34;statusCode&#34;</span>: <span style=color:#ae81ff>404</span>, <span style=color:#e6db74>&#34;body&#34;</span>: <span style=color:#e6db74>&#34;Job not found&#34;</span>}
+
+        <span style=color:#75715e># Now extract the name of the original file</span>
+        <span style=color:#75715e># in the form:</span>
+        <span style=color:#75715e># s3://transcribe-workflow-experiment/uploads/Sample Audio.mp3</span>
+        original_audio_s3_uri <span style=color:#f92672>=</span> response[<span style=color:#e6db74>&#34;TranscriptionJob&#34;</span>][<span style=color:#e6db74>&#34;Media&#34;</span>][<span style=color:#e6db74>&#34;MediaFileUri&#34;</span>]
+        <span style=color:#75715e># Use [5:] to remove the &#39;s3://&#39; and partition returns the string split by the first &#39;/&#39;</span>
+        bucket, _, key <span style=color:#f92672>=</span> original_audio_s3_uri[<span style=color:#ae81ff>5</span>:]<span style=color:#f92672>.</span>partition(<span style=color:#e6db74>&#34;/&#34;</span>)
+        _, _, media_file <span style=color:#f92672>=</span> key<span style=color:#f92672>.</span>partition(<span style=color:#e6db74>&#34;/&#34;</span>)
+        log<span style=color:#f92672>.</span>info(f<span style=color:#e6db74>&#34;Media file {media_file} is at: key {key} in bucket {bucket}&#34;</span>)
+
+        <span style=color:#75715e># Job status will either be &#34;COMPLETED&#34; or &#34;FAILED&#34;</span>
+        job_status <span style=color:#f92672>=</span> event[<span style=color:#e6db74>&#34;detail&#34;</span>][<span style=color:#e6db74>&#34;TranscriptionJobStatus&#34;</span>]
+
+        new_folder <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;completed/&#34;</span>
+        <span style=color:#66d9ef>if</span> job_status <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;FAILED&#34;</span>:
+            new_folder <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;failed/&#34;</span>
+
+        <span style=color:#75715e># Tell AWS to &#39;move&#39; the file in S3 which really means making a copy and deleting the original</span>
+        s3<span style=color:#f92672>.</span>copy_object(
+            Bucket<span style=color:#f92672>=</span>bucket,
+            CopySource<span style=color:#f92672>=</span>f<span style=color:#e6db74>&#34;{bucket}/{key}&#34;</span>,
+            Key<span style=color:#f92672>=</span>f<span style=color:#e6db74>&#34;{new_folder}{media_file}&#34;</span>,
+        )
+        s3<span style=color:#f92672>.</span>delete_object(Bucket<span style=color:#f92672>=</span>bucket, Key<span style=color:#f92672>=</span>key)
+
+    <span style=color:#66d9ef>return</span> {<span style=color:#e6db74>&#34;statusCode&#34;</span>: <span style=color:#ae81ff>200</span>, <span style=color:#e6db74>&#34;body&#34;</span>: <span style=color:#e6db74>&#34;Lambda: Transcribe Cleanup Complete&#34;</span>}
+
+</code></pre></div><h3 id=enhance-the-lambda-iam-role-for-2nd-lambda-function>Enhance the Lambda IAM role for 2nd Lambda function</h3><p>We will need to add additional permissions to the IAM role in order to complete this overall architecture, specifically the ability to access the S3 bucket we created previously.</p><ol><li><p>Once the Lambda function is created, click to see the details.</p></li><li><p>Click on &lsquo;Configuration&rsquo;</p></li><li><p>Then click on the &lsquo;Role Name&rsquo; and it should open a new tab</p></li><li><p>You should now see the IAM permissions for the role associated with your Lambda function.</p></li><li><p>Click on the &lsquo;Add Permissions&rsquo; dropdown and select &lsquo;Create Inline Policy&rsquo;. Click on the &lsquo;JSON&rsquo; tab and input the following policy and click &lsquo;Review Policy&rsquo;. Make sure your bucket name you added replaces <code>transcribe-workflow-experiment</code> in the JSON.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#f92672>&#34;Version&#34;</span>: <span style=color:#e6db74>&#34;2012-10-17&#34;</span>,
+    <span style=color:#f92672>&#34;Statement&#34;</span>: [
+        {
+            <span style=color:#f92672>&#34;Sid&#34;</span>: <span style=color:#e6db74>&#34;ListObjectsInBucket&#34;</span>,
+            <span style=color:#f92672>&#34;Effect&#34;</span>: <span style=color:#e6db74>&#34;Allow&#34;</span>,
+            <span style=color:#f92672>&#34;Action&#34;</span>: [<span style=color:#e6db74>&#34;s3:ListBucket&#34;</span>],
+            <span style=color:#f92672>&#34;Resource&#34;</span>: [<span style=color:#e6db74>&#34;arn:aws:s3:::transcribe-workflow-experiment&#34;</span>]
+        },
+        {
+            <span style=color:#f92672>&#34;Sid&#34;</span>: <span style=color:#e6db74>&#34;AllObjectActions&#34;</span>,
+            <span style=color:#f92672>&#34;Effect&#34;</span>: <span style=color:#e6db74>&#34;Allow&#34;</span>,
+            <span style=color:#f92672>&#34;Action&#34;</span>: <span style=color:#e6db74>&#34;s3:*Object&#34;</span>,
+            <span style=color:#f92672>&#34;Resource&#34;</span>: [<span style=color:#e6db74>&#34;arn:aws:s3:::transcribe-workflow-experiment/*&#34;</span>]
+        }
+    ]
+}
+</code></pre></div></li><li><p>On the next screen, name like policy something descriptive like: &ldquo;allow-bucket-access-for-transcribe-workflow-cleanup&rdquo;.</p></li><li><p>Now we add permission to query AWS Transcribe jobs. Repeat the same steps with a new policy and this JSON:</p></li></ol><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#f92672>&#34;Version&#34;</span>: <span style=color:#e6db74>&#34;2012-10-17&#34;</span>,
+    <span style=color:#f92672>&#34;Statement&#34;</span>: [
+        {
+            <span style=color:#f92672>&#34;Sid&#34;</span>: <span style=color:#e6db74>&#34;QueryTranscriptionJobs&#34;</span>,
+            <span style=color:#f92672>&#34;Effect&#34;</span>: <span style=color:#e6db74>&#34;Allow&#34;</span>,
+            <span style=color:#f92672>&#34;Action&#34;</span>: <span style=color:#e6db74>&#34;transcribe:GetTranscriptionJob&#34;</span>,
+            <span style=color:#f92672>&#34;Resource&#34;</span>: <span style=color:#e6db74>&#34;*&#34;</span>
+        }
+    ]
+}
+</code></pre></div><h3 id=wire-up-events-with-eventbridge>Wire up events with EventBridge</h3><p>Now we need to connect all these elements together. We do this with AWS EventBridge. EventBridge is kind of a universal event bus that can tap into many events throughout the AWS ecosystem. For example, the creation of an object in S3 can directly trigger a Lambda function. However, only EventBridge can detect the AWS Transcribe job status change. So to be consistent, we will use EventBridge for both S3 object creation and AWS Transcribe job status change.</p><h4 id=eventbridge-setup-for-new-s3-object>EventBridge setup for new S3 object</h4><p>In this setup, we will indicate to EventBridge to process all &lsquo;Object Created&rsquo; events in the bucket &lsquo;transcribe-workflow-experiment&rsquo; in the folder &lsquo;uploads/&rsquo;. More information about EventBridge patterns can be found in the <a href=https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html>AWS Docs</a>. Any other objects created in other folders in the S3 bucket will not be processed by this rule.</p><ol><li><p>Navigate to the EventBridge page in the AWS console: <a href=https://us-east-1.console.aws.amazon.com/events/home>https://us-east-1.console.aws.amazon.com/events/home</a></p></li><li><p>From the left menu, select &lsquo;Rules&rsquo;</p></li><li><p>Click on the &lsquo;Create Rule&rsquo; button</p></li><li><p>Use the following parameters and click &lsquo;Next&rsquo;</p><ul><li><strong>Name:</strong> transcribe-workflow-new-object-rule</li><li><strong>Description:</strong> Notifies Lambda there is a new audio file in S3 in the &lsquo;/uploads&rsquo; folder</li><li><strong>Event Bus:</strong> default</li></ul></li><li><p>On the &lsquo;Built Event Pattern&rsquo; page:</p><ul><li><strong>Event source:</strong> AWS events or EventBridge partner events</li><li>Scroll past the Sample Event section</li><li><strong>Creation method:</strong> Select &lsquo;Custom Pattern (JSON Editor)&rsquo;</li><li>Insert the following and make sure you update the bucket name to your bucket</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#f92672>&#34;source&#34;</span>: [<span style=color:#e6db74>&#34;aws.s3&#34;</span>],
+    <span style=color:#f92672>&#34;detail-type&#34;</span>: [<span style=color:#e6db74>&#34;Object Created&#34;</span>],
+    <span style=color:#f92672>&#34;detail&#34;</span>: {
+        <span style=color:#f92672>&#34;bucket&#34;</span>: {
+            <span style=color:#f92672>&#34;name&#34;</span>: [<span style=color:#e6db74>&#34;transcribe-workflow-experiment&#34;</span>]
+        },
+        <span style=color:#f92672>&#34;object&#34;</span>: {
+            <span style=color:#f92672>&#34;key&#34;</span>: [
+                {
+                    <span style=color:#f92672>&#34;prefix&#34;</span>: <span style=color:#e6db74>&#34;uploads&#34;</span>
+                }
+            ]
+        }
+    }
+}
+</code></pre></div><ul><li>Click &lsquo;Next&rsquo;</li></ul></li><li><p>On the &lsquo;Select target(s)` screen:</p><ul><li><strong>Target 1:</strong> Select AWS Service</li><li>In the dropdown, use target type &lsquo;Lambda Function&rsquo;</li><li>Select the first Lambda function that starts the transcribe job</li><li>Select &lsquo;Next&rsquo;</li><li>You may skip tags and click &lsquo;Next&rsquo; and then complete the process</li></ul></li></ol><h4 id=eventbridge-setup-for-aws-transcribe-job-complete>EventBridge setup for AWS Transcribe Job Complete</h4><ol><li><p>From the left menu, select &lsquo;Rules&rsquo;</p></li><li><p>Click on the &lsquo;Create Rule&rsquo; button</p></li><li><p>Use the following parameters and click &lsquo;Next&rsquo;</p><ul><li><strong>Name:</strong> transcribe-workflow-job-complete-rule</li><li><strong>Description:</strong> Notifies Lambda the transcribe job is complete</li><li><strong>Event Bus:</strong> default</li></ul></li><li><p>On the &lsquo;Built Event Pattern&rsquo; page:</p><ul><li><strong>Event source:</strong> AWS events or EventBridge partner events</li><li>Scroll past the Sample Event section</li><li><strong>Creation method:</strong> Select &lsquo;Custom Pattern (JSON Editor)&rsquo;</li><li>Insert the following:</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#f92672>&#34;source&#34;</span>: [<span style=color:#e6db74>&#34;aws.transcribe&#34;</span>],
+    <span style=color:#f92672>&#34;detail-type&#34;</span>: [<span style=color:#e6db74>&#34;Transcribe Job State Change&#34;</span>],
+    <span style=color:#f92672>&#34;detail&#34;</span>: {
+        <span style=color:#f92672>&#34;TranscriptionJobStatus&#34;</span>: [<span style=color:#e6db74>&#34;COMPLETED&#34;</span>, <span style=color:#e6db74>&#34;FAILED&#34;</span>]
+    }
+}
+</code></pre></div><ul><li>Click &lsquo;Next&rsquo;</li></ul></li><li><p>On the &lsquo;Select target(s)` screen:</p><ul><li><strong>Target 1:</strong> Select AWS Service</li><li>In the dropdown, use target type &lsquo;Lambda Function&rsquo;</li><li>Select the second Lambda function that cleans up the transcribe job</li><li>Select &lsquo;Next&rsquo;</li><li>You may skip tags and click &lsquo;Next&rsquo; and then complete the process</li></ul></li></ol><h3 id=test-it-out>Test it out</h3><p>You can try this out by using the AWS Console and uploading files into the &lsquo;uploads/&rsquo; folder of the bucket. Try loading an audio file and seeing the output. Next, try loading a non-audio file like a jpg and watch the file get swept into the &lsquo;failed&rsquo; folder.</p><h2 id=next-steps>Next steps</h2><p>As you can see, this is essentially a two step workflow. More tasks can be added to the 2nd Lambda function if you wish. To further extend this, you can insert Step Functions to have a more flexible workflow. Most of the code will be the same with some slight tweaks to the event formats.</p><p>One difficulty you will have with Step Functions is to pause the flow while AWS Transcribe is processing the job. Step Functions generates a token that is needed to resume the workflow and that token will not be stored by AWS Transcribe. So you&rsquo;d need a mechanism to either store the token in something like DynamoDB or do some deep inspection of the workflow to extract the resume token.</p><p>Regardless, I hope this helps someone working on a similar effort.</p></div></div></div></main><footer class=page-footer><div class="footer-copyright text-center py-3">©
+<script>document.write((new Date).getFullYear())</script>&nbsp;<a href=/>Edgar Román</a></div></footer></body></html>
